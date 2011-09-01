@@ -56,7 +56,7 @@ public final class MessagesProvider {
      * picking the correct translations.
      */
     public static <T extends Messages> T create(Class <T> messagesClass, Locale locale) {
-        return create(messagesClass, new ConstantLocaleProvider(locale));
+        return create(messagesClass, new FixedLocaleProvider(locale));
     }
 
     /**

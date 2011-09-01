@@ -27,18 +27,26 @@ import java.util.Locale;
 import static fi.evident.lokki.Utils.requireNonNull;
 
 /**
- * A LocaleProvider which always returns given Locale.
+ * A LocaleProvider which always returns specified Locale.
  */
-public final class ConstantLocaleProvider implements LocaleProvider {
+public final class FixedLocaleProvider implements LocaleProvider {
 
-    private final Locale locale;
+    private Locale locale;
 
-    public ConstantLocaleProvider(Locale locale) {
-        this.locale = requireNonNull(locale);
+    public FixedLocaleProvider() {
+        this(Locale.getDefault());
+    }
+    
+    public FixedLocaleProvider(Locale locale) {
+        setLocale(locale);
     }
 
     @Override
     public Locale getLocale() {
         return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = requireNonNull(locale);
     }
 }

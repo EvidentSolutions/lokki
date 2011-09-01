@@ -38,7 +38,7 @@ public final class ResourceBundleMessageSource implements MessageSource {
     private final LocaleProvider localeProvider;
 
     public ResourceBundleMessageSource(String baseName, Locale locale) {
-        this(baseName, new ConstantLocaleProvider(locale));
+        this(baseName, new FixedLocaleProvider(locale));
     }
 
     public ResourceBundleMessageSource(String baseName, LocaleProvider localeProvider) {
