@@ -27,9 +27,9 @@ import fi.evident.lokki.Messages.Key;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Locale;
 
+import static fi.evident.lokki.Utils.proxy;
 import static fi.evident.lokki.Utils.requireNonNull;
 import static java.text.MessageFormat.format;
 
@@ -39,46 +39,38 @@ import static java.text.MessageFormat.format;
  */
 public final class MessagesProvider {
 
-    private MessagesProvider() { }
+    private final LocaleProvider localeProvider;
+    private final MessageSource messageSource;
 
-    /**
-     * Creates a new Messages object based on given class. A ResourceBundle corresponding
-     * to the class is loaded from the classpath and system's default locale is used for
-     * picking the correct translations.
-     */
-    public static <T extends Messages> T create(Class<T> messagesClass) {
-        return create(messagesClass, DefaultLocaleProvider.INSTANCE);
+    public static MessagesProvider forDefaultLocale() {
+        return new MessagesProvider(DefaultLocaleProvider.INSTANCE);
+    }
+
+    public static MessagesProvider forLocale(Locale locale) {
+        return new MessagesProvider(new FixedLocaleProvider(locale));
+    }
+
+    public MessagesProvider(LocaleProvider localeProvider) {
+        this.localeProvider = requireNonNull(localeProvider);
+        this.messageSource = null;
+    }
+
+    public MessagesProvider(MessageSource messageSource) {
+        this.messageSource = requireNonNull(messageSource);
+        this.localeProvider = null;
     }
 
     /**
-     * Creates a new Messages object based on given class. A ResourceBundle corresponding
-     * to the class is loaded from the classpath and given locale is used for
-     * picking the correct translations.
+     * Creates a new Messages object based on given class.
      */
-    public static <T extends Messages> T create(Class <T> messagesClass, Locale locale) {
-        return create(messagesClass, new FixedLocaleProvider(locale));
-    }
-
-    /**
-     * Creates a new Messages object based on given class. A ResourceBundle corresponding
-     * to the class is loaded from the classpath and given LocaleProvider is consulted
-     * to resolve the locale used for selecting translations.
-     */    
-    public static <T extends Messages> T create(Class<T> messagesClass, LocaleProvider localeProvider) {
-        return create(messagesClass, new ResourceBundleMessageSource(messagesClass.getName(), localeProvider));
-    }
-
-    /**
-     * Creates a new Messages object based on given class. Given MessageSource functions
-     * as the source of messages and is responsible for deciding what Locale to use and
-     * how to load messages.
-     */
-    public static <T extends Messages> T create(Class<T> messagesClass, MessageSource messageSource) {
+    public <T extends Messages> T create(Class<T> messagesClass) {
         verifyClass(messagesClass);
 
-        InvocationHandler handler = new MyInvocationHandler(messagesClass, messageSource);
-        Object proxy = Proxy.newProxyInstance(messagesClass.getClassLoader(), new Class<?>[] {messagesClass}, handler);
-        return messagesClass.cast(proxy);
+        MessageSource source = (messageSource != null)
+            ? messageSource
+            : new ResourceBundleMessageSource(messagesClass.getName(), localeProvider);
+
+        return proxy(messagesClass, new MyInvocationHandler(messagesClass, source));
     }
 
     private static <T extends Messages> void verifyClass(Class<T> messagesClass) {

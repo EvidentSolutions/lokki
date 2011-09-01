@@ -33,10 +33,10 @@ which would look like this:
 To actually use this in our code, we'll ask MessagesProvider to create
 an instance of Greetings for us:
 
-    Greetings greetings = MessagesProvider.create(Greetings.class);
+    Greetings greetings = MessagesProvider.forDefaultLocale().create(Greetings.class);
 
     System.out.println(greetings.hello("world"));
 
 That's it! You can further tweak the functionality by specifying some
-additional annotations or by giving your own LocaleProvider or MessageSource,
-but the basics remain the same.
+additional annotations or by configuring the properties of the
+MessagesProvider, but the basics remain the same.

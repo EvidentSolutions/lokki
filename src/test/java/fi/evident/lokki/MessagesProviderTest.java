@@ -31,6 +31,8 @@ import static org.junit.Assert.assertThat;
 
 public class MessagesProviderTest {
 
+    private final MessagesProvider messagesProvider = MessagesProvider.forDefaultLocale();
+
     @Test
     public void byDefaultTheNameOfMethodIsUsedAsMessageKey() {
         assertThat(messages().foo(), is("The Foo Message"));
@@ -63,21 +65,21 @@ public class MessagesProviderTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void methodsWithVoidReturnTypeAreNotAllowed() {
-        MessagesProvider.create(MessagesWithVoidReturnType.class);
+        messagesProvider.create(MessagesWithVoidReturnType.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void methodsWithNonStringReturnTypeAreNotAllowed() {
-        MessagesProvider.create(MessagesWithListReturnType.class);
+        messagesProvider.create(MessagesWithListReturnType.class);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void methodsWithNonStringReturnTypeAreNotAllowedEvenWhenInherited() {
-        MessagesProvider.create(MessagesWithInheritedInvalidMethods.class);
+        messagesProvider.create(MessagesWithInheritedInvalidMethods.class);
     }
 
-    private static TestMessages messages() {
-        return MessagesProvider.create(TestMessages.class);
+    private TestMessages messages() {
+        return messagesProvider.create(TestMessages.class);
     }
 
     interface MessagesWithVoidReturnType extends Messages {
