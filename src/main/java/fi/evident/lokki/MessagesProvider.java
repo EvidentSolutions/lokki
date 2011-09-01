@@ -28,7 +28,6 @@ import fi.evident.lokki.Messages.Key;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.text.MessageFormat;
 import java.util.Locale;
 
 import static fi.evident.lokki.Utils.requireNonNull;
@@ -75,9 +74,20 @@ public final class MessagesProvider {
      * how to load messages.
      */
     public static <T extends Messages> T create(Class<T> messagesClass, MessageSource messageSource) {
+        verifyClass(messagesClass);
+
         InvocationHandler handler = new MyInvocationHandler(messagesClass, messageSource);
         Object proxy = Proxy.newProxyInstance(messagesClass.getClassLoader(), new Class<?>[] {messagesClass}, handler);
         return messagesClass.cast(proxy);
+    }
+
+    private static <T extends Messages> void verifyClass(Class<T> messagesClass) {
+        if (!messagesClass.isInterface())
+            throw new IllegalArgumentException("class is not an interface: " + messagesClass.getName());
+        
+        for (Method method : messagesClass.getMethods())
+            if (method.getReturnType() != String.class)
+                throw new IllegalArgumentException("invalid method definition: " + method);
     }
 
     private static final class MyInvocationHandler implements InvocationHandler {

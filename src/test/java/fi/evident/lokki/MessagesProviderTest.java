@@ -24,40 +24,70 @@ package fi.evident.lokki;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class MessagesProviderTest {
 
-    private final TestMessages messages = MessagesProvider.create(TestMessages.class);
-
     @Test
     public void byDefaultTheNameOfMethodIsUsedAsMessageKey() {
-        assertThat(messages.foo(), is("The Foo Message"));
+        assertThat(messages().foo(), is("The Foo Message"));
     }
 
     @Test
     public void keyCanBeOverriddenWithAnnotation() {
-        assertThat(messages.messageWithKey(), is("The Bar Message"));
+        assertThat(messages().messageWithKey(), is("The Bar Message"));
     }
 
     @Test
     public void defaultMessagesCanBeSpecified() {
-        assertThat(messages.defaultMessage(), is("my default message"));
+        assertThat(messages().defaultMessage(), is("my default message"));
     }
 
     @Test
     public void messageSourceIsConsultedBeforeUsingDefaultMessage() {
-        assertThat(messages.bar(), is("The Bar Message"));
+        assertThat(messages().bar(), is("The Bar Message"));
     }
 
     @Test
     public void ifMessageIsNotFoundErrorStringIsReturned() {
-        assertThat(messages.unknown(), is("???unknown???"));
+        assertThat(messages().unknown(), is("???unknown???"));
     }
 
     @Test
     public void messagesSupportParameters() {
-        assertThat(messages.messageWithParameters("foo", 42), is("str: foo, x: 42"));
+        assertThat(messages().messageWithParameters("foo", 42), is("str: foo, x: 42"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void methodsWithVoidReturnTypeAreNotAllowed() {
+        MessagesProvider.create(MessagesWithVoidReturnType.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void methodsWithNonStringReturnTypeAreNotAllowed() {
+        MessagesProvider.create(MessagesWithListReturnType.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void methodsWithNonStringReturnTypeAreNotAllowedEvenWhenInherited() {
+        MessagesProvider.create(MessagesWithInheritedInvalidMethods.class);
+    }
+
+    private static TestMessages messages() {
+        return MessagesProvider.create(TestMessages.class);
+    }
+
+    interface MessagesWithVoidReturnType extends Messages {
+        void foo();
+    }
+
+    interface MessagesWithListReturnType extends Messages {
+        List<String> foo();
+    }
+
+    interface MessagesWithInheritedInvalidMethods extends MessagesWithListReturnType {
     }
 }
