@@ -32,6 +32,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 import static fi.evident.lokki.Utils.requireNonNull;
+import static java.text.MessageFormat.format;
 
 /**
  * Provides various ways of constructing Messages-objects that can be
@@ -91,22 +92,28 @@ public final class MessagesProvider {
 
         @Override
         public Object invoke(Object target, Method method, Object[] args) throws Throwable {
-            Key keyAnnotation = method.getAnnotation(Key.class);
-            String key = (keyAnnotation != null) ? keyAnnotation.value() : method.getName();
+            String key = resolveMessageKey(method);
+            String pattern = resolveMessagePattern(key, method);
 
-            String message = messageSource.getMessage(key);
-            if (message != null)
-                return format(message, args);
-
-            DefaultMessage defaultMessage = method.getAnnotation(DefaultMessage.class);
-            if (defaultMessage != null)
-                return format(defaultMessage.value(), args);
+            if (pattern != null)
+                return (args != null && args.length != 0) ? format(pattern, args) : pattern;
             else
                 return "???" + key + "???";
         }
 
-        private static Object format(String pattern, Object[] args) {
-            return (args != null && args.length != 0) ? MessageFormat.format(pattern, args) : pattern;
+        private static String resolveMessageKey(Method method) {
+            Key keyAnnotation = method.getAnnotation(Key.class);
+            return (keyAnnotation != null) ? keyAnnotation.value() : method.getName();
+        }
+
+        private String resolveMessagePattern(String key, Method method) {
+            String message = messageSource.getMessage(key);
+            if (message != null) {
+                return message;
+            } else {
+                DefaultMessage defaultMessage = method.getAnnotation(DefaultMessage.class);
+                return defaultMessage != null ? defaultMessage.value() : null;
+            }
         }
     }
 }
