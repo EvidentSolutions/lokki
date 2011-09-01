@@ -1,0 +1,40 @@
+Lokki takes away the pain from localization. It is inspired by Google
+Web Toolkit's localization mechanism, but has no external dependencies
+and can be included in any program and integrated with any framework.
+
+To specify the things that can be localized, one creates an interface which
+extends Messages and specifies the default messages using annotations:
+
+    package myapp;
+
+    import fi.evident.lokki.Messages;
+
+    public interface Greetings extends Messages {
+
+        @DefaultMessage("Good morning!")
+        String goodMorning();
+
+        @DefaultMessage("Good evening!")
+        String goodEvening();
+
+        @DefaultMessage("Hello, {0}!")
+        String hello(String target);
+    }
+
+Then we can create a corresponding localization File based on the fully
+qualified of the class. So we could myapp/Greeting_fi.properties which
+would look like this:
+
+    goodMorning   Hyvää huomenta!
+    goodEvening   Hyvää iltaa!
+    hello         Hei, {0}!
+
+To actually use this in our code, we'll ask MessagesProvider to create
+a new Messages instance for us:
+
+    Greetings greetings = MessagesProvider.create(Greetings.class);
+
+    System.out.println(greetings.hello("world"));
+
+That's it! You can further tweak the functionality by giving your own
+LocaleProvider or MessageSource, but the basics remain the same.
