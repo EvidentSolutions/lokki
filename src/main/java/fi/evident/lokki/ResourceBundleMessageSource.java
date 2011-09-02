@@ -22,9 +22,7 @@
 
 package fi.evident.lokki;
 
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static fi.evident.lokki.Utils.requireNonNull;
 
@@ -32,29 +30,29 @@ import static fi.evident.lokki.Utils.requireNonNull;
  * A MessageSource which uses Java's normal {@link ResourceBundle}-mechanism
  * for loading the localization messages.
  */
-public final class ResourceBundleMessageSource implements MessageSource {
+final class ResourceBundleMessageSource implements MessageSource {
 
-    private final String baseName;
+    private final List<String> baseNames;
     private final LocaleProvider localeProvider;
 
-    public ResourceBundleMessageSource(String baseName, Locale locale) {
-        this(baseName, new FixedLocaleProvider(locale));
-    }
-
-    public ResourceBundleMessageSource(String baseName, LocaleProvider localeProvider) {
-        this.baseName = requireNonNull(baseName);
+    ResourceBundleMessageSource(List<String> baseNames, LocaleProvider localeProvider) {
+        this.baseNames = new ArrayList<String>(baseNames);
         this.localeProvider = requireNonNull(localeProvider);
     }
 
     @Override
     public String getMessage(String key) {
         Locale locale = localeProvider.getLocale();
-        ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
 
-        try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
-            return null;
+        for (String baseName : baseNames) {
+            try {
+                ResourceBundle bundle = ResourceBundle.getBundle(baseName, locale);
+                return bundle.getString(key);
+            } catch (MissingResourceException e) {
+                // Ok, try next bundle
+            }
         }
+
+        return null;
     }
 }

@@ -22,35 +22,10 @@
 
 package fi.evident.lokki;
 
-import org.junit.Test;
+public interface InheritedTestMessages extends TestMessages {
+    String baz();
 
-import java.util.Locale;
-
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-
-public class ResourceBundleMessageSourceTest {
-
-    private final FixedLocaleProvider localeProvider = new FixedLocaleProvider(Locale.ENGLISH);
-
-    private final ResourceBundleMessageSource messageSource =
-        new ResourceBundleMessageSource(asList(TestMessages.class.getName()), localeProvider);
-
-    @Test
-    public void specificMessagesAreUsedIfFound() {
-        localeProvider.setLocale(new Locale("fi", "FI"));
-        assertThat(messageSource.getMessage("foo"), is("Foo-viesti"));
-    }
-
-    @Test
-    public void defaultMessagesAreUsedAsFallback() {
-        assertThat(messageSource.getMessage("foo"), is("The Foo Message"));
-    }
-
-    @Test
-    public void nullIsReturnedIfMessageIsNotFound() {
-        assertThat(messageSource.getMessage("unknown"), is(nullValue()));
-    }
+    @Override
+    @DefaultMessage("overridden default message")
+    String defaultMessage();
 }

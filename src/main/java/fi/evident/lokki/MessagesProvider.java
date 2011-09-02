@@ -27,6 +27,8 @@ import fi.evident.lokki.Messages.Key;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static fi.evident.lokki.Utils.proxy;
@@ -68,9 +70,23 @@ public final class MessagesProvider {
 
         MessageSource source = (messageSource != null)
             ? messageSource
-            : new ResourceBundleMessageSource(messagesClass.getName(), localeProvider);
+            : new ResourceBundleMessageSource(bundleNamesFor(messagesClass), localeProvider);
 
         return proxy(messagesClass, new MyInvocationHandler(messagesClass, source));
+    }
+
+    private static List<String> bundleNamesFor(Class<? extends Messages> messagesClass) {
+        List<String> bundles = new ArrayList<String>();
+        addBundleNames(messagesClass, bundles);
+        return bundles;
+    }
+
+    private static void addBundleNames(Class<?> messagesClass, List<String> bundles) {
+        bundles.add(messagesClass.getName());
+
+        for (Class<?> parent : messagesClass.getInterfaces())
+            if (parent != Messages.class)
+                addBundleNames(parent, bundles);
     }
 
     private static <T extends Messages> void verifyClass(Class<T> messagesClass) {

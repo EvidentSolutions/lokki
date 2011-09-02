@@ -63,6 +63,26 @@ public class MessagesProviderTest {
         assertThat(messages().messageWithParameters("foo", 42), is("str: foo, x: 42"));
     }
 
+    @Test
+    public void byDefaultMessagesAreInheritedFromParent() {
+        assertThat(inheritedMessages().foo(), is("The Foo Message"));
+    }
+
+    @Test
+    public void childrenCanOverrideInheritedMessages() {
+        assertThat(inheritedMessages().bar(), is("The Overridden Bar Message"));
+    }
+
+    @Test
+    public void childrenCanAddNewMessages() {
+        assertThat(inheritedMessages().baz(), is("The Baz Message"));
+    }
+
+    @Test
+    public void childrenCanOverrideDefaultMessage() {
+        assertThat(inheritedMessages().defaultMessage(), is("overridden default message"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void methodsWithVoidReturnTypeAreNotAllowed() {
         messagesProvider.create(MessagesWithVoidReturnType.class);
@@ -80,6 +100,10 @@ public class MessagesProviderTest {
 
     private TestMessages messages() {
         return messagesProvider.create(TestMessages.class);
+    }
+
+    private InheritedTestMessages inheritedMessages() {
+        return messagesProvider.create(InheritedTestMessages.class);
     }
 
     interface MessagesWithVoidReturnType extends Messages {
