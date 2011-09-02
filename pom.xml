@@ -34,6 +34,12 @@
         </dependency>
     </dependencies>
 
+    <scm>
+        <connection>scm:hg:https://bitbucket.org/evidentsolutions/lokki</connection>
+        <developerConnection>scm:hg:ssh://hg@bitbucket.org/evidentsolutions/lokki</developerConnection>
+        <url>https://bitbucket.org/evidentsolutions/lokki</url>
+    </scm>
+
     <distributionManagement>
         <repository>
             <id>evident-maven-repo</id>
