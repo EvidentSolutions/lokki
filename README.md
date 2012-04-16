@@ -6,6 +6,7 @@ To define the things that can be localized, we create an interface which
 extends from Messages. We can optionally also specify the default messages
 using annotations:
 
+    :::java
     package myapp;
 
     import fi.evident.lokki.Messages;
@@ -26,6 +27,7 @@ Then we can create corresponding localization files based on the fully
 qualified name of the class. So we could have myapp/Greeting_fi.properties
 which would look like this:
 
+    :::properties
     goodMorning   Hyvää huomenta!
     goodEvening   Hyvää iltaa!
     hello         Hei, {0}!
@@ -33,6 +35,7 @@ which would look like this:
 To actually use this in our code, we'll ask MessagesProvider to create
 an instance of Greetings for us:
 
+    :::java
     Greetings greetings = MessagesProvider.forDefaultLocale().create(Greetings.class);
 
     System.out.println(greetings.hello("world"));
