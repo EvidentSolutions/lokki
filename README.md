@@ -59,5 +59,5 @@ dependency to your pom.xml:
 Attributions
 ============
 
-Image of seagull used on the website is by [Jiyang Chen](http://jiyangchen.com/)
+Image of ring-billed gull used on the website is by [Jiyang Chen](http://jiyangchen.com/)
 and is used by [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/).
