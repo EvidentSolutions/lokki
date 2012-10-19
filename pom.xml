@@ -10,7 +10,7 @@
 
     <groupId>fi.evident.lokki</groupId>
     <artifactId>lokki</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2-SNAPSHOT</version>
     <name>Lokki</name>
     <description>A simple localization library for Java</description>
     <url>https://bitbucket.org/evidentsolutions/lokki</url>
@@ -168,6 +168,6 @@
         <connection>scm:hg:https://bitbucket.org/evidentsolutions/lokki</connection>
         <developerConnection>scm:hg:ssh://hg@bitbucket.org/evidentsolutions/lokki</developerConnection>
         <url>https://bitbucket.org/evidentsolutions/lokki</url>
-        <tag>lokki-0.1.1</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
