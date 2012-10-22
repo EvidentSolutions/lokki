@@ -22,18 +22,24 @@
 
 package fi.evident.lokki;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 final class Utils {
 
-    public static <T> T requireNonNull(T value) {
+    private Utils() { }
+
+    @Nonnull
+    @SuppressWarnings("ConstantConditions")
+    public static <T> T requireNonNull(@Nonnull T value) {
         if (value == null) throw new NullPointerException();
 
         return value;
     }
 
-    public static <T> T proxy(Class<T> cl, InvocationHandler invocationHandler) {
+    @Nonnull
+    public static <T> T proxy(@Nonnull Class<T> cl, @Nonnull InvocationHandler invocationHandler) {
         return cl.cast(Proxy.newProxyInstance(cl.getClassLoader(), new Class[] { cl }, invocationHandler));
     }
 }

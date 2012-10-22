@@ -22,6 +22,7 @@
 
 package fi.evident.lokki;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -32,6 +33,7 @@ public enum DefaultLocaleProvider implements LocaleProvider {
     INSTANCE;
 
     @Override
+    @Nonnull
     public Locale getLocale() {
         return Locale.getDefault();
     }

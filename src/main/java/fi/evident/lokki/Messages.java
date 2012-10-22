@@ -22,6 +22,7 @@
 
 package fi.evident.lokki;
 
+import javax.annotation.Nonnull;
 import java.lang.annotation.*;
 
 /**
@@ -37,7 +38,7 @@ public interface Messages {
     @Documented
     @Target(ElementType.METHOD)
     @interface Key {
-        String value();
+        @Nonnull String value();
     }
 
     /**
@@ -47,6 +48,6 @@ public interface Messages {
     @Documented
     @Target(ElementType.METHOD)
     @interface DefaultMessage {
-        String value();
+        @Nonnull String value();
     }
 }

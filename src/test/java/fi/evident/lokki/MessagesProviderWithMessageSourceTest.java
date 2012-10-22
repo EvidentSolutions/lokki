@@ -24,23 +24,29 @@ package fi.evident.lokki;
 
 import org.junit.Test;
 
-import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class MessagesProviderTest {
+public class MessagesProviderWithMessageSourceTest {
 
-    private final MessagesProvider messagesProvider = MessagesProvider.forDefaultLocale();
+    private final MockMessageSource messageSource = new MockMessageSource();
+    private final MessagesProvider messagesProvider = new MessagesProvider(messageSource);
 
     @Test
     public void byDefaultTheNameOfMethodIsUsedAsMessageKey() {
-        assertThat(messages().foo(), is("The Foo Message"));
+        messageSource.setMessage("foo", "My message");
+        assertThat(messages().foo(), is("My message"));
     }
 
     @Test
     public void keyCanBeOverriddenWithAnnotation() {
-        assertThat(messages().messageWithKey(), is("The Bar Message"));
+        messageSource.setMessage("bar", "My other message");
+        assertThat(messages().messageWithKey(), is("My other message"));
     }
 
     @Test
@@ -50,7 +56,8 @@ public class MessagesProviderTest {
 
     @Test
     public void messageSourceIsConsultedBeforeUsingDefaultMessage() {
-        assertThat(messages().bar(), is("The Bar Message"));
+        messageSource.setMessage("bar", "My message");
+        assertThat(messages().bar(), is("My message"));
     }
 
     @Test
@@ -63,59 +70,22 @@ public class MessagesProviderTest {
         assertThat(messages().messageWithParameters("foo", 42), is("str: foo, x: 42"));
     }
 
-    @Test
-    public void byDefaultMessagesAreInheritedFromParent() {
-        assertThat(inheritedMessages().foo(), is("The Foo Message"));
-    }
-
-    @Test
-    public void childrenCanOverrideInheritedMessages() {
-        assertThat(inheritedMessages().bar(), is("The Overridden Bar Message"));
-    }
-
-    @Test
-    public void childrenCanAddNewMessages() {
-        assertThat(inheritedMessages().baz(), is("The Baz Message"));
-    }
-
-    @Test
-    public void childrenCanOverrideDefaultMessage() {
-        assertThat(inheritedMessages().defaultMessage(), is("overridden default message"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void methodsWithVoidReturnTypeAreNotAllowed() {
-        messagesProvider.create(MessagesWithVoidReturnType.class);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void methodsWithNonStringReturnTypeAreNotAllowed() {
-        messagesProvider.create(MessagesWithListReturnType.class);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void methodsWithNonStringReturnTypeAreNotAllowedEvenWhenInherited() {
-        messagesProvider.create(MessagesWithInheritedInvalidMethods.class);
-    }
-
     private TestMessages messages() {
         return messagesProvider.create(TestMessages.class);
     }
 
-    private InheritedTestMessages inheritedMessages() {
-        return messagesProvider.create(InheritedTestMessages.class);
-    }
+    private static class MockMessageSource implements MessageSource {
 
-    @SuppressWarnings("unused")
-    interface MessagesWithVoidReturnType extends Messages {
-        void foo();
-    }
+        private final Map<String,String> messages = new HashMap<String, String>();
 
-    @SuppressWarnings("unused")
-    interface MessagesWithListReturnType extends Messages {
-        List<String> foo();
-    }
+        @Override
+        @Nullable
+        public String getMessage(@Nonnull String key) {
+            return messages.get(key);
+        }
 
-    interface MessagesWithInheritedInvalidMethods extends MessagesWithListReturnType {
+        public void setMessage(@Nonnull String key, String message) {
+            messages.put(key, message);
+        }
     }
 }

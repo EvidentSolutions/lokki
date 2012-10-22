@@ -22,6 +22,8 @@
 
 package fi.evident.lokki;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static fi.evident.lokki.Utils.requireNonNull;
@@ -32,16 +34,20 @@ import static fi.evident.lokki.Utils.requireNonNull;
  */
 final class ResourceBundleMessageSource implements MessageSource {
 
+    @Nonnull
     private final List<String> baseNames;
+
+    @Nonnull
     private final LocaleProvider localeProvider;
 
-    ResourceBundleMessageSource(List<String> baseNames, LocaleProvider localeProvider) {
+    ResourceBundleMessageSource(@Nonnull List<String> baseNames, @Nonnull LocaleProvider localeProvider) {
         this.baseNames = new ArrayList<String>(baseNames);
         this.localeProvider = requireNonNull(localeProvider);
     }
 
+    @Nullable
     @Override
-    public String getMessage(String key) {
+    public String getMessage(@Nonnull String key) {
         Locale locale = localeProvider.getLocale();
 
         for (String baseName : baseNames) {

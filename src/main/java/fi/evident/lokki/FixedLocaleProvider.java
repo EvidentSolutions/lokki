@@ -22,6 +22,7 @@
 
 package fi.evident.lokki;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 import static fi.evident.lokki.Utils.requireNonNull;
@@ -31,22 +32,24 @@ import static fi.evident.lokki.Utils.requireNonNull;
  */
 public final class FixedLocaleProvider implements LocaleProvider {
 
+    @Nonnull
     private Locale locale;
 
     public FixedLocaleProvider() {
         this(Locale.getDefault());
     }
     
-    public FixedLocaleProvider(Locale locale) {
+    public FixedLocaleProvider(@Nonnull Locale locale) {
         setLocale(locale);
     }
 
+    @Nonnull
     @Override
     public Locale getLocale() {
         return locale;
     }
 
-    public void setLocale(Locale locale) {
+    public void setLocale(@Nonnull Locale locale) {
         this.locale = requireNonNull(locale);
     }
 }

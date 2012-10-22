@@ -25,6 +25,8 @@ package fi.evident.lokki;
 import fi.evident.lokki.Messages.DefaultMessage;
 import fi.evident.lokki.Messages.Key;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,23 +43,28 @@ import static java.text.MessageFormat.format;
  */
 public final class MessagesProvider {
 
+    @Nullable
     private final LocaleProvider localeProvider;
+
+    @Nullable
     private final MessageSource messageSource;
 
+    @Nonnull
     public static MessagesProvider forDefaultLocale() {
         return new MessagesProvider(DefaultLocaleProvider.INSTANCE);
     }
 
-    public static MessagesProvider forLocale(Locale locale) {
+    @Nonnull
+    public static MessagesProvider forLocale(@Nonnull Locale locale) {
         return new MessagesProvider(new FixedLocaleProvider(locale));
     }
 
-    public MessagesProvider(LocaleProvider localeProvider) {
+    public MessagesProvider(@Nonnull LocaleProvider localeProvider) {
         this.localeProvider = requireNonNull(localeProvider);
         this.messageSource = null;
     }
 
-    public MessagesProvider(MessageSource messageSource) {
+    public MessagesProvider(@Nonnull MessageSource messageSource) {
         this.messageSource = requireNonNull(messageSource);
         this.localeProvider = null;
     }
@@ -65,23 +72,25 @@ public final class MessagesProvider {
     /**
      * Creates a new Messages object based on given class.
      */
-    public <T extends Messages> T create(Class<T> messagesClass) {
+    @Nonnull
+    public <T extends Messages> T create(@Nonnull Class<T> messagesClass) {
         verifyClass(messagesClass);
 
         MessageSource source = (messageSource != null)
             ? messageSource
             : new ResourceBundleMessageSource(bundleNamesFor(messagesClass), localeProvider);
 
-        return proxy(messagesClass, new MyInvocationHandler(messagesClass, source));
+        return proxy(messagesClass, new MyInvocationHandler(source));
     }
 
-    private static List<String> bundleNamesFor(Class<? extends Messages> messagesClass) {
+    @Nonnull
+    private static List<String> bundleNamesFor(@Nonnull Class<? extends Messages> messagesClass) {
         List<String> bundles = new ArrayList<String>();
         addBundleNames(messagesClass, bundles);
         return bundles;
     }
 
-    private static void addBundleNames(Class<?> messagesClass, List<String> bundles) {
+    private static void addBundleNames(@Nonnull Class<?> messagesClass, @Nonnull List<String> bundles) {
         bundles.add(messagesClass.getName());
 
         for (Class<?> parent : messagesClass.getInterfaces())
@@ -89,7 +98,7 @@ public final class MessagesProvider {
                 addBundleNames(parent, bundles);
     }
 
-    private static <T extends Messages> void verifyClass(Class<T> messagesClass) {
+    private static <T extends Messages> void verifyClass(@Nonnull Class<T> messagesClass) {
         if (!messagesClass.isInterface())
             throw new IllegalArgumentException("class is not an interface: " + messagesClass.getName());
         
@@ -100,16 +109,16 @@ public final class MessagesProvider {
 
     private static final class MyInvocationHandler implements InvocationHandler {
 
-        private final Class<?> messagesClass;
+        @Nonnull
         private final MessageSource messageSource;
 
-        public MyInvocationHandler(Class<?> messagesClass, MessageSource messageSource) {
-            this.messagesClass = requireNonNull(messagesClass);
+        MyInvocationHandler(@Nonnull MessageSource messageSource) {
             this.messageSource = requireNonNull(messageSource);
         }
 
+        @Nonnull
         @Override
-        public Object invoke(Object target, Method method, Object[] args) throws Throwable {
+        public Object invoke(Object target, @Nonnull Method method, @Nullable Object[] args) throws Throwable {
             String key = resolveMessageKey(method);
             String pattern = resolveMessagePattern(key, method);
 
@@ -119,12 +128,14 @@ public final class MessagesProvider {
                 return "???" + key + "???";
         }
 
-        private static String resolveMessageKey(Method method) {
+        @Nonnull
+        private static String resolveMessageKey(@Nonnull Method method) {
             Key keyAnnotation = method.getAnnotation(Key.class);
             return (keyAnnotation != null) ? keyAnnotation.value() : method.getName();
         }
 
-        private String resolveMessagePattern(String key, Method method) {
+        @Nullable
+        private String resolveMessagePattern(@Nonnull String key, @Nonnull Method method) {
             String message = messageSource.getMessage(key);
             if (message != null) {
                 return message;

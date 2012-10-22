@@ -22,6 +22,9 @@
 
 package fi.evident.lokki;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * A source of localization messages.
  */
@@ -30,5 +33,6 @@ public interface MessageSource {
     /**
      * Returns the message for given key, or null if the message is not found.
      */
-    String getMessage(String key);
+    @Nullable
+    String getMessage(@Nonnull String key);
 }

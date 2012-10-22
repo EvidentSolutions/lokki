@@ -22,6 +22,7 @@
 
 package fi.evident.lokki;
 
+import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -32,5 +33,6 @@ public interface LocaleProvider {
     /**
      * Returns the locale associated with current thread.
      */
+    @Nonnull
     Locale getLocale();
 }
