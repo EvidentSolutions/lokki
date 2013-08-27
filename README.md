@@ -4,6 +4,11 @@ Lokki takes away the pain from localization. It is inspired by Google
 Web Toolkit's localization mechanism, but has no external dependencies
 and can be included in any program and integrated with any framework.
 
+[![Build Status](https://drone.io/bitbucket.org/evidentsolutions/lokki/status.png)](https://drone.io/bitbucket.org/evidentsolutions/lokki/latest)
+
+Usage
+=====
+
 To define the things that can be localized, we create an interface which
 extends from `Messages`. We can optionally also specify the default messages
 using annotations:
@@ -45,7 +50,8 @@ That's it! You can further tweak the functionality by specifying some
 additional annotations or by configuring the properties of the
 `MessagesProvider`, but the basics remain the same.
 
-# Using Lokki with Maven
+Using Lokki with Maven
+======================
 
 Lokki is available on the central Maven repository, so just add the following
 dependency to your pom.xml:
