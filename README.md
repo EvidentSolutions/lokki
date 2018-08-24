@@ -4,8 +4,6 @@ Lokki takes away the pain from localization. It is inspired by Google
 Web Toolkit's localization mechanism, but has no external dependencies
 and can be included in any program and integrated with any framework.
 
-[![Build Status](https://drone.io/bitbucket.org/evidentsolutions/lokki/status.png)](https://drone.io/bitbucket.org/evidentsolutions/lokki/latest)
-
 Usage
 =====
 
