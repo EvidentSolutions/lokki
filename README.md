@@ -65,9 +65,3 @@ dependency to your pom.xml:
     <version>0.1.1</version>
 </dependency>
 ```
-
-Attributions
-============
-
-Image of ring-billed gull used on the website is by [Jiyang Chen](http://jiyangchen.com/)
-and is used by [CC BY-SA 3.0](http://creativecommons.org/licenses/by-sa/3.0/).
